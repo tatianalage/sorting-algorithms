@@ -4,6 +4,8 @@
 #include <chrono>
 #include <ctime>
 #include <initializer_list>
+#include <fstream>
+#include <cmath> 
 
 using std::cin;
 using std::cout;
@@ -14,6 +16,7 @@ using std::time;
 using std::chrono::duration_cast;
 using std::chrono::high_resolution_clock;
 using std::chrono::nanoseconds;
+using std::ofstream;
 
 typedef struct _node
 {
@@ -21,6 +24,63 @@ typedef struct _node
     struct _node *ptrPrev;
     int iData;
 } Node;
+
+Node *createNode(int iData);
+void insertNodeEnd(Node **head, int iData);
+void swapData(Node *node1, Node *node2);
+void unoptimizedInsertionSort(Node **head);
+void optimizedInsertionSort(Node **head);
+void printList(Node *head);
+void generateRandomList(Node **head, int size);
+void copyList(Node **head1, Node **head2);
+void isSorted(Node **head);
+
+int main()
+{
+    ofstream outputFile("sorting_times.txt");
+    if (!outputFile.is_open())
+    {
+        cout << "Error opening file!" << endl;
+        return 1;
+    }
+
+    const int listSize = 10000;
+    const int numLists = 100;
+
+    long long unoptimizedDurations[numLists];
+    long long optimizedDurations[numLists];
+
+    for (int i = 0; i < numLists; i++)
+    {
+        Node *head1 = nullptr;
+        Node *head2 = nullptr;
+
+        generateRandomList(&head1, listSize);
+        copyList(&head1, &head2);
+
+        auto start_unoptimized = high_resolution_clock::now();
+        unoptimizedInsertionSort(&head1);
+        auto stop_unoptimized = high_resolution_clock::now();
+
+        isSorted(&head1);
+
+        auto start_optimized = high_resolution_clock::now();
+        optimizedInsertionSort(&head2);
+        auto stop_optimized = high_resolution_clock::now();
+
+        isSorted(&head2);
+
+        auto duration_unoptimized = duration_cast<nanoseconds>(stop_unoptimized - start_unoptimized).count();
+        auto duration_optimized = duration_cast<nanoseconds>(stop_optimized - start_optimized).count();
+
+        unoptimizedDurations[i] = duration_unoptimized;
+        optimizedDurations[i] = duration_optimized;
+
+        outputFile << "List #" << i + 1 << ": Unoptimized - " << duration_unoptimized << " ns, Optimized - " << duration_optimized << " ns" << endl;
+    }
+    
+    return 0;
+}
 
 Node *createNode(int iData)
 {
@@ -151,54 +211,4 @@ void isSorted(Node **head)
         }
         tmp = tmp->ptrNext;
     }
-}
-
-int main()
-{
-
-    // Node *head = nullptr;
-    // Node *headTmp = nullptr;
-
-    // generateRandomList(&head, 10);
-    // printList(head);
-    // cout << endl;
-    // copyList(&head,&headTmp);
-
-    // unoptimizedInsertionSort(&head);
-    // optimizedInsertionSort(&headTmp);
-
-    // printList(head);
-    // printList(headTmp);
-
-    int sizes[5] = {1000, 5000, 8000, 10000, 15000};
-
-    for (int size : sizes)
-    {
-        Node *head1 = nullptr;
-        Node *head2 = nullptr;
-
-        generateRandomList(&head1, size);
-        copyList(&head1, &head2);
-
-        auto start_unoptimized = high_resolution_clock::now();
-        unoptimizedInsertionSort(&head1);
-        auto stop_unoptimized = high_resolution_clock::now();
-
-        isSorted(&head1);
-
-        auto start_optimized = high_resolution_clock::now();
-        optimizedInsertionSort(&head2);
-        auto stop_optimized = high_resolution_clock::now();
-
-        isSorted(&head2);
-
-        auto duration_unoptimized = duration_cast<nanoseconds>(stop_unoptimized - start_unoptimized);
-        auto duration_optimized = duration_cast<nanoseconds>(stop_optimized - start_optimized);
-
-        cout << "List size: " << size << endl;
-        cout << "Unoptimized Insertion sort:  " << duration_unoptimized.count() << " nanoseconds." << endl;
-        cout << "Optimized Insertion sort:    " << duration_optimized.count() << " nanoseconds." << endl;
-        cout << endl;
-    }
-    return 0;
 }
