@@ -5,10 +5,9 @@
 #include <ctime>
 #include <initializer_list>
 #include <fstream>
-#include <cmath> 
+#include <cmath>
 #include "sorting.h"
 #include "sorting.cpp"
-
 using std::cin;
 using std::cout;
 using std::endl;
@@ -20,23 +19,9 @@ using std::chrono::high_resolution_clock;
 using std::chrono::nanoseconds;
 using std::ofstream;
 
-
-using std::cin;
-using std::cout;
-using std::endl;
-using std::srand;
-using std::string;
-using std::time;
-using std::chrono::duration_cast;
-using std::chrono::high_resolution_clock;
-using std::chrono::nanoseconds;
-
-
-int main()
-{
+int main() {
     std::ofstream outputFile("sorting_times.txt");
-    if (!outputFile.is_open())
-    {
+    if (!outputFile.is_open()) {
         std::cout << "Error opening file!" << std::endl;
         return 1;
     }
@@ -47,10 +32,9 @@ int main()
     long long unoptimizedDurations[numLists];
     long long optimizedDurations[numLists];
 
-    for (int i = 0; i < numLists; i++)
-    {
-        Node *head1 = nullptr;
-        Node *head2 = nullptr;
+    for (int i = 0; i < numLists; i++) {
+        Node<int>* head1 = nullptr;
+        Node<int>* head2 = nullptr;
 
         generateRandomList(&head1, listSize);
         copyList(&head1, &head2);

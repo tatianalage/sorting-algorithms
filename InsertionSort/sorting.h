@@ -1,5 +1,3 @@
-// sorting.h
-
 #ifndef SORTING_H
 #define SORTING_H
 
@@ -14,20 +12,36 @@ namespace SortingAlgorithms {
     }
 }
 
-typedef struct _node
-{
-    struct _node *ptrNext;
-    struct _node *ptrPrev;
-    int iData;
-} Node;
+template<typename T>
+struct Node {
+    Node<T>* ptrNext;
+    Node<T>* ptrPrev;
+    T iData;
+};
 
-Node *createNode(int iData);
-void insertNodeEnd(Node **head, int iData);
-void unoptimizedInsertionSort(Node **head);
-void optimizedInsertionSort(Node **head);
-void printList(Node *head);
-void generateRandomList(Node **head, int size);
-void copyList(Node **head1, Node **head2);
-void isSorted(Node **head);
+template<typename T>
+Node<T>* createNode(T iData);
 
-#endif // SORTING_H
+template<typename T>
+void insertNodeEnd(Node<T>** head, T iData);
+
+template<typename T>
+void unoptimizedInsertionSort(Node<T>** head);
+
+template<typename T>
+void optimizedInsertionSort(Node<T>** head);
+
+template<typename T>
+void printList(Node<T>* head);
+
+template<typename T>
+void generateRandomList(Node<T>** head, int size);
+
+template<typename T>
+void copyList(Node<T>** head1, Node<T>** head2);
+
+template<typename T>
+void isSorted(Node<T>** head);
+
+#endif
+
