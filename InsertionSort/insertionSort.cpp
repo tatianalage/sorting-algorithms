@@ -5,7 +5,7 @@
 #include <ctime>
 #include <initializer_list>
 #include <fstream>
-#include <cmath> 
+#include <cmath>
 
 using std::cin;
 using std::cout;
@@ -28,8 +28,8 @@ typedef struct _node
 Node *createNode(int iData);
 void insertNodeEnd(Node **head, int iData);
 void swapData(Node *node1, Node *node2);
-void unoptimizedBubbleSort(Node **head);
-void optimizedBubbleSort(Node **head);
+void unoptimizedInsertionSort(Node **head);
+void optimizedInsertionSort(Node **head);
 void printList(Node *head);
 void generateRandomList(Node **head, int size);
 void copyList(Node **head1, Node **head2);
@@ -59,13 +59,13 @@ int main()
         copyList(&head1, &head2);
 
         auto start_unoptimized = high_resolution_clock::now();
-        unoptimizedBubbleSort(&head1);
+        unoptimizedInsertionSort(&head1);
         auto stop_unoptimized = high_resolution_clock::now();
 
         isSorted(&head1);
 
         auto start_optimized = high_resolution_clock::now();
-        optimizedBubbleSort(&head2);
+        optimizedInsertionSort(&head2);
         auto stop_optimized = high_resolution_clock::now();
 
         isSorted(&head2);
@@ -78,7 +78,7 @@ int main()
 
         outputFile << "List #" << i + 1 << ": Unoptimized - " << duration_unoptimized << " ns, Optimized - " << duration_optimized << " ns" << endl;
     }
-    
+
     return 0;
 }
 
@@ -118,48 +118,59 @@ void swapData(Node *node1, Node *node2)
     node2->iData = iTmp;
 }
 
-void unoptimizedBubbleSort(Node **head)
+void unoptimizedInsertionSort(Node **head)
 {
-    bool bUnordered = true;
-    while (bUnordered)
+    for (Node *node1 = *head; node1 != nullptr; node1 = node1->ptrNext)
     {
-        bUnordered = false;
-        Node *currNode = *head;
-        while (currNode->ptrNext != nullptr)
+        for (Node *node2 = node1; node2 != nullptr; node2 = node2->ptrPrev)
         {
-            if (currNode->iData > currNode->ptrNext->iData)
+            if (node2->ptrPrev != nullptr && node2->iData < node2->ptrPrev->iData)
             {
-                swapData(currNode, currNode->ptrNext);
-                bUnordered = true;
+                swapData(node2, node2->ptrPrev);
             }
-            currNode = currNode->ptrNext;
         }
     }
 }
 
-void optimizedBubbleSort(Node **head)
+void optimizedInsertionSort(Node **head)
 {
-    Node *lastNode = *head;
-    while (lastNode->ptrNext)
+    Node *sortedNode = nullptr;
+
+    Node *currentNode = *head;
+    while (currentNode != nullptr)
     {
-        lastNode = lastNode->ptrNext;
-    }
-    bool bUnordered = true;
-    while (bUnordered)
-    {
-        bUnordered = false;
-        Node *currNode = *head;
-        while (currNode != lastNode && currNode != nullptr)
+        Node *nextNode = currentNode->ptrNext;
+
+        if (sortedNode == nullptr || currentNode->iData < sortedNode->iData)
         {
-            if (currNode->iData > currNode->ptrNext->iData)
+            currentNode->ptrNext = sortedNode;
+            if (sortedNode != nullptr)
             {
-                swapData(currNode, currNode->ptrNext);
-                bUnordered = true;
+                sortedNode->ptrPrev = currentNode;
             }
-            currNode = currNode->ptrNext;
+            sortedNode = currentNode;
+            sortedNode->ptrPrev = nullptr;
         }
-        lastNode = lastNode->ptrPrev;
+        else
+        {
+            Node *temp = sortedNode;
+            while (temp->ptrNext != nullptr && temp->ptrNext->iData < currentNode->iData)
+            {
+                temp = temp->ptrNext;
+            }
+            currentNode->ptrNext = temp->ptrNext;
+            if (temp->ptrNext != nullptr)
+            {
+                temp->ptrNext->ptrPrev = currentNode;
+            }
+            temp->ptrNext = currentNode;
+            currentNode->ptrPrev = temp;
+        }
+
+        currentNode = nextNode;
     }
+
+    *head = sortedNode;
 }
 
 void printList(Node *head)
