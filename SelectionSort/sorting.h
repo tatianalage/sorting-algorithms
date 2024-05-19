@@ -1,13 +1,8 @@
-// sorting.h
 
 #ifndef SORTING_H
 #define SORTING_H
 
 #include <iostream>
-#include <fstream>
-#include <chrono>
-#include <ctime>
-#include <cmath>
 
 namespace SortingAlgorithms {
     template<typename T>
@@ -27,11 +22,12 @@ typedef struct _node
 
 Node *createNode(int iData);
 void insertNodeEnd(Node **head, int iData);
-void unoptimizedBubbleSort(Node **head);
-void optimizedBubbleSort(Node **head);
+void swapData(Node *node1, Node *node2);
 void printList(Node *head);
 void generateRandomList(Node **head, int size);
 void copyList(Node **head1, Node **head2);
 void isSorted(Node **head);
+void unoptimizedSelectionSort(Node **head);
+void optimizedSelectionSort(Node **head);
 
-#endif 
+#endif // SORTING_H

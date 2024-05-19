@@ -31,48 +31,11 @@ void insertNodeEnd(Node **head, int iData)
     }
 }
 
-void unoptimizedBubbleSort(Node **head)
+void swapData(Node *node1, Node *node2)
 {
-    bool bUnordered = true;
-    while (bUnordered)
-    {
-        bUnordered = false;
-        Node *currNode = *head;
-        while (currNode->ptrNext != nullptr)
-        {
-            if (currNode->iData > currNode->ptrNext->iData)
-            {
-                SortingAlgorithms::swap(currNode->iData, currNode->ptrNext->iData);
-                bUnordered = true;
-            }
-            currNode = currNode->ptrNext;
-        }
-    }
-}
-
-void optimizedBubbleSort(Node **head)
-{
-    Node *lastNode = *head;
-    while (lastNode->ptrNext)
-    {
-        lastNode = lastNode->ptrNext;
-    }
-    bool bUnordered = true;
-    while (bUnordered)
-    {
-        bUnordered = false;
-        Node *currNode = *head;
-        while (currNode != lastNode && currNode != nullptr)
-        {
-            if (currNode->iData > currNode->ptrNext->iData)
-            {
-                SortingAlgorithms::swap(currNode->iData, currNode->ptrNext->iData);
-                bUnordered = true;
-            }
-            currNode = currNode->ptrNext;
-        }
-        lastNode = lastNode->ptrPrev;
-    }
+    int iTmp = node1->iData;
+    node1->iData = node2->iData;
+    node2->iData = iTmp;
 }
 
 void printList(Node *head)
@@ -122,5 +85,37 @@ void isSorted(Node **head)
             exit(1);
         }
         tmp = tmp->ptrNext;
+    }
+}
+
+void unoptimizedSelectionSort(Node **head)
+{
+    for (Node *node1 = (*head); node1 != nullptr; node1 = node1->ptrNext)
+    {
+
+        for (Node *node2 = node1->ptrNext; node2 != nullptr; node2 = node2->ptrNext)
+        {
+            if (node2->iData <= node1->iData)
+            {
+                swapData(node1, node2);
+            }
+        }
+    }
+}
+
+void optimizedSelectionSort(Node **head)
+{
+    for (Node *node1 = (*head); node1 != nullptr; node1 = node1->ptrNext)
+    {
+
+        Node *minValNode = node1;
+        for (Node *node2 = node1->ptrNext; node2 != nullptr; node2 = node2->ptrNext)
+        {
+            if (node2->iData <= minValNode->iData)
+            {
+                minValNode = node2;
+            }
+        }
+        swapData(node1, minValNode);
     }
 }

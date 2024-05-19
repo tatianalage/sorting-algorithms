@@ -31,48 +31,59 @@ void insertNodeEnd(Node **head, int iData)
     }
 }
 
-void unoptimizedBubbleSort(Node **head)
+void unoptimizedInsertionSort(Node **head)
 {
-    bool bUnordered = true;
-    while (bUnordered)
+    for (Node *node1 = *head; node1 != nullptr; node1 = node1->ptrNext)
     {
-        bUnordered = false;
-        Node *currNode = *head;
-        while (currNode->ptrNext != nullptr)
+        for (Node *node2 = node1; node2 != nullptr; node2 = node2->ptrPrev)
         {
-            if (currNode->iData > currNode->ptrNext->iData)
+            if (node2->ptrPrev != nullptr && node2->iData < node2->ptrPrev->iData)
             {
-                SortingAlgorithms::swap(currNode->iData, currNode->ptrNext->iData);
-                bUnordered = true;
+                SortingAlgorithms::swap(node2->iData, node2->ptrPrev->iData);
             }
-            currNode = currNode->ptrNext;
         }
     }
 }
 
-void optimizedBubbleSort(Node **head)
+void optimizedInsertionSort(Node **head)
 {
-    Node *lastNode = *head;
-    while (lastNode->ptrNext)
+    Node *sortedNode = nullptr;
+
+    Node *currentNode = *head;
+    while (currentNode != nullptr)
     {
-        lastNode = lastNode->ptrNext;
-    }
-    bool bUnordered = true;
-    while (bUnordered)
-    {
-        bUnordered = false;
-        Node *currNode = *head;
-        while (currNode != lastNode && currNode != nullptr)
+        Node *nextNode = currentNode->ptrNext;
+
+        if (sortedNode == nullptr || currentNode->iData < sortedNode->iData)
         {
-            if (currNode->iData > currNode->ptrNext->iData)
+            currentNode->ptrNext = sortedNode;
+            if (sortedNode != nullptr)
             {
-                SortingAlgorithms::swap(currNode->iData, currNode->ptrNext->iData);
-                bUnordered = true;
+                sortedNode->ptrPrev = currentNode;
             }
-            currNode = currNode->ptrNext;
+            sortedNode = currentNode;
+            sortedNode->ptrPrev = nullptr;
         }
-        lastNode = lastNode->ptrPrev;
+        else
+        {
+            Node *temp = sortedNode;
+            while (temp->ptrNext != nullptr && temp->ptrNext->iData < currentNode->iData)
+            {
+                temp = temp->ptrNext;
+            }
+            currentNode->ptrNext = temp->ptrNext;
+            if (temp->ptrNext != nullptr)
+            {
+                temp->ptrNext->ptrPrev = currentNode;
+            }
+            temp->ptrNext = currentNode;
+            currentNode->ptrPrev = temp;
+        }
+
+        currentNode = nextNode;
     }
+
+    *head = sortedNode;
 }
 
 void printList(Node *head)
