@@ -32,11 +32,46 @@ void insertNodeEnd(Node<T> **head, T iData)
     }
 }
 
+/*
 template <typename T>
 void unoptimizedRadixSort(Node<T> **head)
 {
-    optimizedRadixSort(head);
+    if(!*head){
+        cout << "List is empty" << endl;
+        return;
+    }
+    Node<T>*tmpNode = *head;
+    T maxValue = tmpNode->iData;
+
+    while(tmpNode)
+    {
+        if (tmpNode->iData > maxValue)
+            maxValue = tmpNode->iData;
+        tmpNode = tmpNode->ptrNext;
+    }
+    Node<T>*lastNode = tmpNode;
+
+    int exp = 1;
+    wile(maxValue/exp > 0){
+        //Lista de nós
+        Node<T>*bucket[10] = {nullptr};
+        for(Node<T>*nodePass = *head; nodePass != nullptr ; nodePass = nodePass->ptrNext){
+            int bucketIdx = (nodePass/exp)%10;
+            for(i = 1; i < 10 ; i++){
+                bucket[i] = bucket[i-1];
+            }
+            for(Node<T>*nodePrev = lastNode; nodePrev != nullptr ; nodePrev  = nodePrev->prtPrev){
+                
+            }
+
+
+        }
+
+
+    }
+
 }
+*/
 
 template <typename T>
 void optimizedRadixSort(Node<T> **head)
