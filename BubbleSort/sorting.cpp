@@ -106,7 +106,6 @@ void isSorted(Node<T>** head) {
     }
 }
 
-// Explicit template instantiation for int to match the main program's usage
 template Node<int>* createNode<int>(int);
 template void insertNodeEnd<int>(Node<int>**, int);
 template void unoptimizedBubbleSort<int>(Node<int>**);
