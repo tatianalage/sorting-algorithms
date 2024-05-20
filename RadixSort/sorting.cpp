@@ -1,6 +1,8 @@
 #include "sorting.h"
 #include <cstdlib>
 #include <ctime>
+using namespace std;
+
 
 template <typename T>
 Node<T> *createNode(T iData)
@@ -32,110 +34,60 @@ void insertNodeEnd(Node<T> **head, T iData)
     }
 }
 
-/*
+
 template <typename T>
-void unoptimizedRadixSort(Node<T> **head)
-{
-    if(!*head){
+void unoptimizedRadixSort(Node<T> **head) {
+    optimizedRadixSort(head);
+}
+
+template <typename T>
+void optimizedRadixSort(Node<T> **head) {
+    if (!*head) {
         cout << "List is empty" << endl;
         return;
     }
-    Node<T>*tmpNode = *head;
+
+    Node<T>* tmpNode = *head;
     T maxValue = tmpNode->iData;
 
-    while(tmpNode)
-    {
-        if (tmpNode->iData > maxValue)
-            maxValue = tmpNode->iData;
-        tmpNode = tmpNode->ptrNext;
-    }
-    Node<T>*lastNode = tmpNode;
-
-    int exp = 1;
-    wile(maxValue/exp > 0){
-        //Lista de nós
-        Node<T>*bucket[10] = {nullptr};
-        for(Node<T>*nodePass = *head; nodePass != nullptr ; nodePass = nodePass->ptrNext){
-            int bucketIdx = (nodePass/exp)%10;
-            for(i = 1; i < 10 ; i++){
-                bucket[i] = bucket[i-1];
-            }
-            for(Node<T>*nodePrev = lastNode; nodePrev != nullptr ; nodePrev  = nodePrev->prtPrev){
-                
-            }
-
-
-        }
-
-
-    }
-
-}
-*/
-
-template <typename T>
-void optimizedRadixSort(Node<T> **head)
-{
-    if (*head == nullptr)
-        return;
-
-    Node<T> *tmpNode = *head;
-    T maxValue = tmpNode->iData;
-    while (tmpNode != nullptr)
-    {
+    while (tmpNode) {
         if (tmpNode->iData > maxValue)
             maxValue = tmpNode->iData;
         tmpNode = tmpNode->ptrNext;
     }
 
     int exp = 1;
-    while (maxValue / exp > 0)
-    {
-        Node<T> *buckets[10] = {nullptr};
-        Node<T> *bucketTails[10] = {nullptr};
+
+    while (maxValue / exp > 0) {
+        Node<T>* bucket[10] = {nullptr};
+        Node<T>* bucketEnd[10] = {nullptr};
 
         tmpNode = *head;
-        while (tmpNode != nullptr)
-        {
+        while (tmpNode) {
             int bucketIdx = (tmpNode->iData / exp) % 10;
-            Node<T> *nextNode = tmpNode->ptrNext;
-
-            if (buckets[bucketIdx] == nullptr)
-            {
-                buckets[bucketIdx] = tmpNode;
-                tmpNode->ptrPrev = nullptr;
-                tmpNode->ptrNext = nullptr;
-                bucketTails[bucketIdx] = tmpNode;
+            if (bucket[bucketIdx] == nullptr) {
+                bucket[bucketIdx] = tmpNode;
+            } else {
+                // Errado?
+                bucketEnd[bucketIdx]->ptrNext = tmpNode;
             }
-            else
-            {
-                bucketTails[bucketIdx]->ptrNext = tmpNode;
-                tmpNode->ptrPrev = bucketTails[bucketIdx];
-                tmpNode->ptrNext = nullptr;
-                bucketTails[bucketIdx] = tmpNode;
-            }
-            tmpNode = nextNode;
+            bucketEnd[bucketIdx] = tmpNode;
+            tmpNode = tmpNode->ptrNext;
         }
-
-        Node<T> *newHead = nullptr;
-        Node<T> *newTail = nullptr;
-        for (int i = 0; i < 10; ++i)
-        {
-            if (buckets[i] != nullptr)
-            {
-                if (newHead == nullptr)
-                {
-                    newHead = buckets[i];
-                    newTail = bucketTails[i];
-                }
-                else
-                {
-                    newTail->ptrNext = buckets[i];
-                    buckets[i]->ptrPrev = newTail;
-                    newTail = bucketTails[i];
+        Node<T>* newHead = nullptr;
+        Node<T>* newTail = nullptr;
+        for (int i = 0; i < 10; ++i) {
+            if (bucket[i]) {
+                if (!newHead) {
+                    newHead = bucket[i];
+                    newTail = bucketEnd[i];
+                } else {
+                    newTail->ptrNext = bucket[i];
+                    newTail = bucketEnd[i];
                 }
             }
         }
+        newTail->ptrNext = nullptr;
         *head = newHead;
         exp *= 10;
     }
