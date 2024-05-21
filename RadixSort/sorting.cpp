@@ -34,12 +34,6 @@ void insertNodeEnd(Node<T> **head, T iData)
     }
 }
 
-
-template <typename T>
-void unoptimizedRadixSort(Node<T> **head) {
-    optimizedRadixSort(head);
-}
-
 template <typename T>
 void optimizedRadixSort(Node<T> **head) {
     if (!*head) {
@@ -68,7 +62,6 @@ void optimizedRadixSort(Node<T> **head) {
             if (bucket[bucketIdx] == nullptr) {
                 bucket[bucketIdx] = tmpNode;
             } else {
-                // Errado?
                 bucketEnd[bucketIdx]->ptrNext = tmpNode;
             }
             bucketEnd[bucketIdx] = tmpNode;
@@ -76,7 +69,7 @@ void optimizedRadixSort(Node<T> **head) {
         }
         Node<T>* newHead = nullptr;
         Node<T>* newTail = nullptr;
-        for (int i = 0; i < 10; ++i) {
+        for (int i = 0; i < 10; i++) {
             if (bucket[i]) {
                 if (!newHead) {
                     newHead = bucket[i];
@@ -91,6 +84,11 @@ void optimizedRadixSort(Node<T> **head) {
         *head = newHead;
         exp *= 10;
     }
+}
+
+template <typename T>
+void unoptimizedRadixSort(Node<T> **head) {
+    optimizedRadixSort(head);
 }
 
 template <typename T>
