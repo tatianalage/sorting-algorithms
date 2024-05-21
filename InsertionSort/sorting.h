@@ -44,4 +44,3 @@ template<typename T>
 void isSorted(Node<T>** head);
 
 #endif
-

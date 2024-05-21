@@ -1,29 +1,17 @@
 #include "sorting.h"
 #include "sorting.cpp"
 #include <iostream>
-#include <stdlib.h>
-#include <stdio.h>
 #include <chrono>
-#include <ctime>
-#include <initializer_list>
 #include <fstream>
-#include <cmath>
 
-using std::cin;
 using std::cout;
 using std::endl;
-using std::srand;
-using std::string;
-using std::time;
-using std::chrono::duration_cast;
-using std::chrono::high_resolution_clock;
-using std::chrono::nanoseconds;
 using std::ofstream;
 
 int main() {
-    std::ofstream outputFile("sorting_times.txt");
+    ofstream outputFile("sorting_times.txt");
     if (!outputFile.is_open()) {
-        std::cout << "Error opening file!" << std::endl;
+        cout << "Error opening file!" << endl;
         return 1;
     }
 
@@ -58,8 +46,9 @@ int main() {
         unoptimizedDurations[i] = duration_unoptimized;
         optimizedDurations[i] = duration_optimized;
 
-        outputFile << "List #" << i + 1 << ": Unoptimized - " << duration_unoptimized << " ns, Optimized - " << duration_optimized << " ns" << std::endl;
+        outputFile << "List #" << i + 1 << ": Unoptimized - " << duration_unoptimized << " ns, Optimized - " << duration_optimized << " ns" << endl;
     }
 
+    outputFile.close();
     return 0;
 }

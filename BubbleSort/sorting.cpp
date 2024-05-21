@@ -44,23 +44,19 @@ void unoptimizedBubbleSort(Node<T>** head) {
 
 template<typename T>
 void optimizedBubbleSort(Node<T>** head) {
-    Node<T>* lastNode = *head;
-    while (lastNode->ptrNext) {
-        lastNode = lastNode->ptrNext;
-    }
-    bool bUnordered = true;
-    while (bUnordered) {
-        bUnordered = false;
+    Node<T>* lastNode = nullptr;
+    do {
+        bool bUnordered = false;
         Node<T>* currNode = *head;
-        while (currNode != lastNode && currNode != nullptr) {
+        while (currNode->ptrNext != lastNode) {
             if (currNode->iData > currNode->ptrNext->iData) {
                 SortingAlgorithms::swap(currNode->iData, currNode->ptrNext->iData);
                 bUnordered = true;
             }
             currNode = currNode->ptrNext;
         }
-        lastNode = lastNode->ptrPrev;
-    }
+        lastNode = currNode;
+    } while (lastNode != *head);
 }
 
 template<typename T>

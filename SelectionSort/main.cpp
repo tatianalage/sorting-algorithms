@@ -1,3 +1,5 @@
+#include "sorting.h"
+#include "sorting.cpp"
 #include <iostream>
 #include <stdlib.h>
 #include <stdio.h>
@@ -6,18 +8,7 @@
 #include <initializer_list>
 #include <fstream>
 #include <cmath>
-#include "sorting.h"
-#include "sorting.cpp"
-using std::cin;
-using std::cout;
-using std::endl;
-using std::srand;
-using std::string;
-using std::time;
-using std::chrono::duration_cast;
-using std::chrono::high_resolution_clock;
-using std::chrono::nanoseconds;
-using std::ofstream;
+using namespace SortingAlgorithms;
 
 int main() {
     std::ofstream outputFile("sorting_times.txt");
@@ -59,5 +50,6 @@ int main() {
 
         outputFile << "List #" << i + 1 << ": Unoptimized - " << duration_unoptimized << " ns, Optimized - " << duration_optimized << " ns" << std::endl;
     }
+
     return 0;
 }

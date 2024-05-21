@@ -39,32 +39,34 @@ void unoptimizedInsertionSort(Node<T>** head) {
 
 template<typename T>
 void optimizedInsertionSort(Node<T>** head) {
-    Node<T>* sortedNode = nullptr;
-    Node<T>* currentNode = *head;
-    while (currentNode != nullptr) {
-        Node<T>* nextNode = currentNode->ptrNext;
-        if (sortedNode == nullptr || currentNode->iData < sortedNode->iData) {
-            currentNode->ptrNext = sortedNode;
-            if (sortedNode != nullptr) {
-                sortedNode->ptrPrev = currentNode;
-            }
-            sortedNode = currentNode;
-            sortedNode->ptrPrev = nullptr;
+    if (*head == nullptr) return;
+
+    Node<T>* sorted = nullptr;
+    Node<T>* current = *head;
+
+    while (current != nullptr) {
+        Node<T>* next = current->ptrNext;
+
+        if (sorted == nullptr || sorted->iData >= current->iData) {
+            current->ptrNext = sorted;
+            if (sorted != nullptr) sorted->ptrPrev = current;
+            sorted = current;
+            sorted->ptrPrev = nullptr;
         } else {
-            Node<T>* temp = sortedNode;
-            while (temp->ptrNext != nullptr && temp->ptrNext->iData < currentNode->iData) {
+            Node<T>* temp = sorted;
+            while (temp->ptrNext != nullptr && temp->ptrNext->iData < current->iData) {
                 temp = temp->ptrNext;
             }
-            currentNode->ptrNext = temp->ptrNext;
-            if (temp->ptrNext != nullptr) {
-                temp->ptrNext->ptrPrev = currentNode;
-            }
-            temp->ptrNext = currentNode;
-            currentNode->ptrPrev = temp;
+            current->ptrNext = temp->ptrNext;
+            if (temp->ptrNext != nullptr) temp->ptrNext->ptrPrev = current;
+            temp->ptrNext = current;
+            current->ptrPrev = temp;
         }
-        currentNode = nextNode;
+
+        current = next;
     }
-    *head = sortedNode;
+
+    *head = sorted;
 }
 
 template<typename T>

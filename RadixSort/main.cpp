@@ -9,16 +9,8 @@
 #include <fstream>
 #include <cmath>
 
-using std::cin;
-using std::cout;
-using std::endl;
-using std::srand;
-using std::string;
-using std::time;
-using std::chrono::duration_cast;
-using std::chrono::high_resolution_clock;
-using std::chrono::nanoseconds;
-using std::ofstream;
+using namespace std;
+using namespace SortingAlgorithms;
 
 int main() {
     std::ofstream outputFile("sorting_times.txt");

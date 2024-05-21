@@ -42,5 +42,6 @@ int main() {
         outputFile << "List #" << i + 1 << ": Unoptimized - " << duration_unoptimized << " ns, Optimized - " << duration_optimized << " ns" << std::endl;
     }
 
+    outputFile.close();
     return 0;
 }
