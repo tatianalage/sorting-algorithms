@@ -1,5 +1,7 @@
 #include "sorting.h"
 #include "sorting.cpp"
+using namespace SortingAlgorithms;
+
 
 
 
@@ -14,42 +16,19 @@ int main(){
     cout << "Etapa 5: Adiciona o nó ao final do balde" << endl;
     cout << "Etapa 6: Concatena os baldes para formar a nova lista" << endl;
     cout << "Repete o processo!" << endl;
-
-    cout << "EXEMPLO: " << endl;
-    cout << "Analizemos [170, 45, 75, 90, 802, 24, 2, 66]" << endl;
-    cout << "802 é o maior elemento! " << endl;
-
-    cout << "exp = 10" << endl;
-    cout << "Bucket 0: 170" << endl;
-    cout << "Bucket 1: Nenhum" << endl;
-    cout << "Bucket 2: 802, 2" << endl;
-    cout << "Bucket 3: Nenhum" << endl;
-    cout << "Bucket 4: 24" << endl;
-    cout << "Bucket 5: 45, 75" << endl;
-    cout << "Bucket 6: 66" << endl;
-    cout << "Bucket 7: Nenhum" << endl;
-    cout << "Bucket 8: Nenhum" << endl;
-    cout << "Bucket 9: 90" << endl;
-    cout << "Ordenação parcial dos elementos usando o primeiro dígito." << endl;
-    cout << "170 90 802 2 24 45 75 66" << endl;
-    cout << "Agora reunimos todos os buckets para formar a nova lista." << endl;
-
-    cout << "exp = 100" << endl;
-    cout << "Bucket 0: 802" << endl;
-    cout << "Bucket 1: Nenhum" << endl;
-    cout << "Bucket 2: 2, 24" << endl;
-    cout << "Bucket 3: Nenhum" << endl;
-    cout << "Bucket 4: 45" << endl;
-    cout << "Bucket 5: 66" << endl;
-    cout << "Bucket 6: Nenhum" << endl;
-    cout << "Bucket 7: Nenhum" << endl;
-    cout << "Bucket 8: Nenhum" << endl;
-    cout << "Ordenação parcial dos elementos usando o segundo dígito." << endl;
-    cout << "802 2 24 45 66 170 75 90" << endl;
-    cout << "exp =1000"  << endl;
-    cout << "Quebra do While" << endl;
     
-    cout << "RESULTADO: " << endl;
-    cout << "2 24 45 66 75 90 170 802" << endl;
+    Node<int>*head = createNode(170);
+    insertNodeEnd(&head,45);
+    insertNodeEnd(&head,75);
+    insertNodeEnd(&head,90);
+    insertNodeEnd(&head,802);
+    insertNodeEnd(&head,24);
+    insertNodeEnd(&head,2);
+    insertNodeEnd(&head,66);
+    cout << "================================================================================= " << endl;
+    cout << "ALGORITMO FUNCIONANDO: " << endl;
+    optimizedRadixSort(&head);
+
+
     return 0;
 }
