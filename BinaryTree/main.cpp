@@ -1,124 +1,161 @@
+#include <iostream>
+#include <fstream>
+#include <chrono>
+#include <random>
 #include "binary_tree.h"
 #include "queue.h"
-#include "queue.cpp"
 #include "binary_tree.cpp"
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-#include <chrono>
-#include <fstream>
-#include <iostream>
+#include "queue.cpp"
 
-using std::cout;
-using std::endl;
-using std::ofstream;
+BinaryTree::Node<int>* createCompleteBinaryTree(int n) {
+    BinaryTree::Node<int>* root = nullptr;
+    if (n <= 0)
+        return root;
 
-using namespace BinaryTree;
-using namespace Queues;
+    root = BinaryTree::createNode(1);
+    std::mt19937 rng(std::chrono::steady_clock::now().time_since_epoch().count());
+    std::uniform_int_distribution<int> dist(1, n);
 
-Node<int>* populateTree(int numNodes) {
-    Node<int>* root = NULL;
-    for (int i = 0; i < numNodes; i++) {
-        int value = rand() % 1000;
-        root = insertNode(root, value);
+    for (int i = 1; i <= n; i++) {
+        int random_number = dist(rng)*10;
+        BinaryTree::insertNode(root, random_number);
     }
+
     return root;
 }
 
-double measureDFS(Node<int>* root, int value) {
-    std::chrono::time_point<std::chrono::high_resolution_clock> start = std::chrono::high_resolution_clock::now();
-    Node<int>* result = BinaryTree::searchNodeDFS(root, value);
-    std::chrono::time_point<std::chrono::high_resolution_clock> end = std::chrono::high_resolution_clock::now();
-    if (result != NULL) {
-        // printf("DFS: Node with value %d found.\n", value);
-    } else {
-        printf("DFS: Node with value %d not found.\n", value);
+Queues::Queue<int>* createLinkedList(int n) {
+    Queues::Queue<int>* queue = Queues::createQueue<int>();
+    std::mt19937 rng(std::chrono::steady_clock::now().time_since_epoch().count());
+    std::uniform_int_distribution<int> dist(1, n);
+    for (int i = 0; i < n; ++i) {
+        int random_number = dist(rng);
+        Queues::enqueue(queue, random_number);
     }
-    return std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
+    return queue;
 }
 
-double measureBFS(Node<int>* root, int value) {
-    std::chrono::time_point<std::chrono::high_resolution_clock> start = std::chrono::high_resolution_clock::now();
-    Node<int>* result = BinaryTree::searchNodeBFS(root, value);
-    std::chrono::time_point<std::chrono::high_resolution_clock> end = std::chrono::high_resolution_clock::now();
-    if (result != NULL) {
-        // printf("BFS: Node with value %d found.\n", value);
-    } else {
-        printf("BFS: Node with value %d not found.\n", value);
+bool searchInLinkedList(Queues::Queue<int>* queue, int target) {
+    Queues::Queue<int>* temp = Queues::createQueue<int>();
+    bool found = false;
+
+    while (!Queues::isQueueEmpty(queue)) {
+        int element = Queues::dequeue(queue);
+        Queues::enqueue(temp, element);
+        if (element == target) {
+            found = true;
+            break;
+        }
     }
-    return std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
+
+    while (!Queues::isQueueEmpty(temp)) {
+        int element = Queues::dequeue(temp);
+        Queues::enqueue(queue, element);
+    }
+
+    Queues::deleteQueue(temp);
+    return found;
 }
 
-double measureListCreation(int numElements) {
-    Queues::Queue<int*>* myQueue = Queues::createQueue<int*>();
-    std::chrono::time_point<std::chrono::high_resolution_clock> start = std::chrono::high_resolution_clock::now();
-    for (int i = 0; i < numElements; i++) {
-        int* value = (int*)malloc(sizeof(int));
-        *value = rand() % 1000;
-        Queues::enqueue(myQueue, value);
+bool searchInBinaryTreeBFS(BinaryTree::Node<int>* root, int target) {
+    if (root == nullptr) {
+        std::cout << "Tree is empty" << std::endl;
+        return false;
     }
-    std::chrono::time_point<std::chrono::high_resolution_clock> end = std::chrono::high_resolution_clock::now();
-    Queues::deleteQueue(myQueue);
-    return std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
+
+    Queues::Queue<BinaryTree::Node<int>*>* queue = Queues::createQueue<BinaryTree::Node<int>*>();
+    Queues::enqueue(queue, root);
+
+    while (!Queues::isQueueEmpty(queue)) {
+        BinaryTree::Node<int>* current = Queues::dequeue(queue);
+        //std::cout << "Visiting node with value: " << current->iPayload << std::endl;
+
+        if (current->iPayload == target) {
+            Queues::deleteQueue(queue);
+            return true;
+        }
+
+        if (current->ptrLeft != nullptr) {
+            Queues::enqueue(queue, current->ptrLeft);
+        }
+
+        if (current->ptrRight != nullptr) {
+            Queues::enqueue(queue, current->ptrRight);
+        }
+    }
+
+    Queues::deleteQueue(queue);
+    return false;
 }
 
-double measureTreeCreation(int numNodes) {
-    Node<int>* root = NULL;
-    std::chrono::time_point<std::chrono::high_resolution_clock> start = std::chrono::high_resolution_clock::now();
-    for (int i = 0; i < numNodes; i++) {
-        int value = rand() % 1000;
-        root = BinaryTree::insertNode(root, value);
+bool searchInBinaryTreeDFS(BinaryTree::Node<int>* root, int target) {
+    if (root == nullptr)
+        return false;
+
+    if (root->iPayload == target) {
+        return true;
     }
-    std::chrono::time_point<std::chrono::high_resolution_clock> end = std::chrono::high_resolution_clock::now();
-    return std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
+
+    bool foundLeft = searchInBinaryTreeDFS(root->ptrLeft, target);
+    if (foundLeft)
+        return true;
+
+    bool foundRight = searchInBinaryTreeDFS(root->ptrRight, target);
+    if (foundRight)
+        return true;
+
+    return false;
 }
 
 int main() {
-    srand(time(NULL));
-    ofstream outputFile("performance_times.txt");
+    std::ofstream outputFile("tempos.txt");
     if (!outputFile.is_open()) {
-        cout << "Error opening file!" << endl;
+        std::cerr << "Error opening file for writing\n";
         return 1;
     }
 
-    const int numNodes[] = {10000, 30000, 50000}; 
-    const int numElements[] = {10000, 30000, 50000}; 
-    int totalTests = 1000; 
-    int totalCombinations = sizeof(numNodes) / sizeof(numNodes[0]) * sizeof(numElements) / sizeof(numElements[0]);
-    int testsPerCombination = totalTests / totalCombinations;
-    int remainingTests = totalTests % totalCombinations;
     int testCount = 0;
 
-    for (int n = 0; n < sizeof(numNodes) / sizeof(numNodes[0]); ++n) {
-        for (int e = 0; e < sizeof(numElements) / sizeof(numElements[0]); ++e) {
-            long long dfsDurations[testsPerCombination];
-            long long bfsDurations[testsPerCombination];
-            long long listCreationDurations[testsPerCombination];
-            long long treeCreationDurations[testsPerCombination];
+    for (int n = 100; n <= 100000; n += 1000) {
+        auto start_tree_creation = std::chrono::high_resolution_clock::now();
+        BinaryTree::Node<int>* tree_root = createCompleteBinaryTree(n);
+        auto end_tree_creation = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double> elapsed_tree_creation = end_tree_creation - start_tree_creation;
+        double tree_creation_seconds = elapsed_tree_creation.count();
 
-            int searchValue = rand() % 1000; // Define search value for each combination
+        auto start_list_creation = std::chrono::high_resolution_clock::now();
+        Queues::Queue<int>* linked_list = createLinkedList(n);
+        auto end_list_creation = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double> elapsed_list_creation = end_list_creation - start_list_creation;
+        double list_creation_seconds = elapsed_list_creation.count();
 
-            for (int i = 0; i < testsPerCombination; i++) {
-                treeCreationDurations[i] = measureTreeCreation(numNodes[n]);
-            }
+        int target = n / 2;
+        auto start_tree_search_bfs = std::chrono::high_resolution_clock::now();
+        bool found_bfs = searchInBinaryTreeBFS(tree_root, target);
+        auto end_tree_search_bfs = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double> elapsed_tree_search_bfs = end_tree_search_bfs - start_tree_search_bfs;
+        double tree_search_bfs_seconds = elapsed_tree_search_bfs.count();
 
-            Node<int>* root = populateTree(numNodes[n]);
-            for (int i = 0; i < testsPerCombination; i++) {
-                dfsDurations[i] = measureDFS(root, searchValue);
-                bfsDurations[i] = measureBFS(root, searchValue);
-            }
+        auto start_tree_search_dfs = std::chrono::high_resolution_clock::now();
+        bool found_dfs = searchInBinaryTreeDFS(tree_root, target);
+        auto end_tree_search_dfs = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double> elapsed_tree_search_dfs = end_tree_search_dfs - start_tree_search_dfs;
+        double tree_search_dfs_seconds = elapsed_tree_search_dfs.count();
 
-            for (int i = 0; i < testsPerCombination; i++) {
-                listCreationDurations[i] = measureListCreation(numElements[e]);
-            }
+        auto start_list_search = std::chrono::high_resolution_clock::now();
+        bool found = searchInLinkedList(linked_list, target);
+        auto end_list_search = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double> elapsed_list_search = end_list_search - start_list_search;
+        double list_search_seconds = elapsed_list_search.count();
 
-            for (int i = 0; i < testsPerCombination; i++) {
-                outputFile << "Test #" << ++testCount << " (Nodes: " << numNodes[n] << ", Elements: " << numElements[e] << "): Tree Creation - " << treeCreationDurations[i] << " ns, "
-                           << "DFS - " << dfsDurations[i] << " ns, "
-                           << "BFS - " << bfsDurations[i] << " ns, "
-                           << "List Creation - " << listCreationDurations[i] << " ns" << endl;
-            }
-        }
+        outputFile << "Test #" << ++testCount << " (Nodes: " << n << "):  "
+                   << "Tree Creation: " << tree_creation_seconds << " seconds  "
+                   << "List Creation: " << list_creation_seconds << " seconds  "
+                   << "Tree Search (BFS): " << tree_search_bfs_seconds << " seconds  "
+                   << "Tree Search (DFS): " << tree_search_dfs_seconds << " seconds  "
+                   << "List Search: " << list_search_seconds << " seconds\n";
+
+        Queues::deleteQueue(linked_list);
     }
     outputFile.close();
     return 0;

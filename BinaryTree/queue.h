@@ -1,8 +1,6 @@
 #ifndef QUEUE_H
 #define QUEUE_H
 
-#include <stdbool.h>
-
 namespace Queues {
 
 template <typename T>
@@ -32,6 +30,6 @@ bool isQueueEmpty(Queue<T>* ptrQueue);
 template <typename T>
 void deleteQueue(Queue<T>* ptrQueue);
 
-} 
+} // namespace Queues
 
-#endif 
+#endif // QUEUE_H
